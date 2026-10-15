@@ -6,7 +6,21 @@ Projeto acadêmico de infraestrutura segmentada e segura, simulado com Docker Co
 
 Um escritório de contabilidade processa documentos fiscais, informações trabalhistas, registros de funcionários e dados financeiros. Uma rede sem segmentação adequada pode permitir que uma estação de trabalho comprometida alcance diretamente serviços sensíveis. Este projeto demonstra a separação entre a rede de clientes (LAN) e uma zona de serviços (DMZ), com regras de acesso controladas.
 
-## 2. Objetivos
+## 2. Contextualização e escolha do cenário
+
+A escolha de um **escritório de contabilidade** como cenário para o desenvolvimento deste projeto está diretamente relacionada à minha experiência profissional, pois atualmente trabalho nesse ambiente e tenho contato com atividades e processos que envolvem informações contábeis, fiscais, trabalhistas e financeiras.
+
+Durante minha vivência profissional, percebi a importância da segurança da informação nesse setor, principalmente devido à necessidade de proteger dados de clientes, documentos empresariais e informações confidenciais que fazem parte da rotina de um escritório contábil.
+
+Dessa forma, optei por desenvolver uma simulação de infraestrutura de rede voltada para esse contexto, buscando relacionar os conhecimentos adquiridos na disciplina de **Segurança da Informação** com uma realidade profissional próxima à minha.
+
+O projeto utiliza **Docker, Docker Compose, Linux e Iptables** para simular uma infraestrutura segmentada, composta por uma estação de trabalho, um firewall, um servidor web e um banco de dados. O objetivo é demonstrar como a aplicação de regras de firewall e a separação de redes podem contribuir para restringir acessos indevidos e melhorar o controle da comunicação entre os serviços.
+
+É importante destacar que o ambiente desenvolvido é inteiramente simulado, utilizando dados fictícios, sem qualquer conexão com a infraestrutura ou com as informações reais do escritório em que trabalho.
+
+Assim, além de atender aos requisitos acadêmicos da atividade, o projeto representa uma oportunidade de aplicar conceitos de segurança da informação a um cenário relacionado à minha experiência profissional, contribuindo para minha formação na área de Tecnologia da Informação.
+
+## 3. Objetivos
 
 - Segmentar o tráfego entre LAN e DMZ.
 - Autorizar HTTP do cliente ao portal Nginx.
@@ -14,7 +28,7 @@ Um escritório de contabilidade processa documentos fiscais, informações traba
 - Registrar evidências com rotas, respostas HTTP e contadores `iptables`.
 - Reproduzir o laboratório com Docker Compose.
 
-## 3. Arquitetura
+## 4. Arquitetura
 
 ```text
 LAN 172.28.10.0/24                      DMZ 172.28.20.0/24
@@ -37,7 +51,7 @@ LAN 172.28.10.0/24                      DMZ 172.28.20.0/24
 
 **Limitação:** Nginx e MySQL compartilham a mesma rede DMZ; o tráfego direto entre eles não é filtrado por este firewall. Para isolamento de produção, separar o banco em uma rede de dados e implementar controles adicionais.
 
-## 4. Matriz de tráfego
+## 5. Matriz de tráfego
 
 | Origem | Destino | Porta | Política |
 |---|---|---|---|
@@ -46,7 +60,7 @@ LAN 172.28.10.0/24                      DMZ 172.28.20.0/24
 | LAN | MySQL (`172.28.20.20`) | TCP 3306 | Negar (política `DROP`) |
 | Demais fluxos roteados | DMZ | Outras | Negar (política `DROP`) |
 
-## 5. Estrutura dos arquivos
+## 6. Estrutura dos arquivos
 
 ```text
 firewall-contabilidade/
@@ -69,7 +83,7 @@ firewall-contabilidade/
 
 O projeto local usa imagem customizada do MySQL para instalar `iproute`, adicionar `/usr/sbin` ao `PATH` e configurar rota para `172.28.10.0/24` via `172.28.20.2`. A rota do cliente para a DMZ passa por `172.28.10.2`, e a rota de retorno do Nginx para a LAN passa por `172.28.20.2`.
 
-## 6. Execução
+## 7. Execução
 
 Requisitos: Docker Desktop com Compose e terminal PowerShell. Abra o terminal na pasta que contém `docker-compose.yml`. Configure as senhas de teste no `.env` antes da primeira inicialização.
 
@@ -81,7 +95,7 @@ docker compose ps
 
 Não execute `docker compose down -v` se quiser preservar o volume do MySQL.
 
-## 7. Testes e evidências
+## 8. Testes e evidências
 
 **Verificar rota do banco:**
 
@@ -109,7 +123,7 @@ docker compose exec firewall iptables -L FORWARD -n -v
 
 Resultado observado: `Operation timed out` na porta 3306; em seguida, `Chain FORWARD (policy DROP 3 packets, 180 bytes)`. Como os contadores foram zerados antes do teste, o resultado é consistente com descarte pelo firewall. Para atribuição inequívoca à porta 3306, é recomendado acrescentar uma regra de contador específica ou capturar os pacotes.
 
-## 8. Segurança e limitações
+## 9. Segurança e limitações
 
 - Não publicar senhas ou o `.env` no GitHub; usar `.gitignore`.
 - Não inserir dados reais de clientes no laboratório.
@@ -119,10 +133,10 @@ Resultado observado: `Operation timed out` na porta 3306; em seguida, `Chain FOR
 - O Docker Desktop e as regras do host podem afetar o roteamento; repetir testes em cada ambiente.
 - O firewall demonstrado filtra tráfego encaminhado pelo container; não substitui todos os controles do host e da rede corporativa.
 
-## 9. Próximos aprimoramentos
+## 10. Próximos aprimoramentos
 
 Separar o banco em uma terceira rede, usar autenticação e TLS, registrar logs, implantar backups e aplicar o princípio do menor privilégio para a aplicação.
 
-## 10. Encerramento
+## 11. Encerramento
 
 A simulação demonstra segmentação de rede e aplicação de regras para reduzir a exposição de serviços sensíveis de um escritório contábil. Os testes documentados evidenciam acesso autorizado ao portal e ausência de acesso direto ao MySQL pela estação cliente.
