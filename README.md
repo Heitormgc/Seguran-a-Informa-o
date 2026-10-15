@@ -2,8 +2,6 @@
 
 Projeto acadêmico de infraestrutura segmentada e segura, simulado com Docker Compose, redes Docker bridge, firewall Linux (`iptables`), Nginx e MySQL 8.4.
 
-> **Aviso:** laboratório demonstrativo com dados fictícios. Não representa uma infraestrutura pronta para produção e não deve armazenar informações reais de clientes.
-
 ## 1. Cenário de aplicação
 
 Um escritório de contabilidade processa documentos fiscais, informações trabalhistas, registros de funcionários e dados financeiros. Uma rede sem segmentação adequada pode permitir que uma estação de trabalho comprometida alcance diretamente serviços sensíveis. Este projeto demonstra a separação entre a rede de clientes (LAN) e uma zona de serviços (DMZ), com regras de acesso controladas.
